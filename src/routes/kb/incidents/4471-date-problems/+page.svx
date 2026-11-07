@@ -1,0 +1,33 @@
+---
+layout: runbook
+title: '#4471 · split date problems'
+owner: support desk
+status: documented
+reviewed: 2026-11-07
+signature: 'konradmpietras · MEGA.dev S01E03'
+---
+
+<script>
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+
+  const signature = 'konradmpietras · MEGA.dev S01E03';
+</script>
+
+#4471 merges 412 unique reports about dates, but its source data shows two separate problems.
+Each needs its own ticket so the work and impact remain clear.
+
+## Shared parser reads dates month first
+
+**379 reports.** The shared parser reads every date as month first. Day-first tenants therefore
+see dates with the day and month flipped. This is the primary cause currently represented by #4471.
+
+## booking-v3 form hint shows the wrong format
+
+**33 reports.** On `booking-v3`, the form hint displays `MM/DD/YYYY`. People enter dates as shown,
+but the form interprets them using the tenant's day-first format. This is a separate defect that was
+incorrectly merged into #4471 and did not have its own ticket.
+
+The counts classify the 412 unique report IDs after duplicate export rows are removed. Intake tags
+are not used because they are browser-derived guesses and can disagree with the tenant and form data.
+
+<RenderStamp {signature} />
