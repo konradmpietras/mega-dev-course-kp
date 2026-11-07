@@ -4,13 +4,13 @@ title: '#4471 · split date problems'
 owner: support desk
 status: documented
 reviewed: 2026-11-07
-signature: 'konradmpietras · MEGA.dev S01E03'
+signature: 'v1.eyJzdWIiOiI0MDcwIiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQwNjI0MzQsImV4cCI6MTc5NDE0ODgzNH0.cyl2pe85GicOZT6QpBAbY2KgVnlw2Y0S9Vl5RKn9qLY'
 ---
 
 <script>
   import RenderStamp from '#lib/kb/RenderStamp.svelte';
 
-  const signature = 'konradmpietras · MEGA.dev S01E03';
+  const signature = 'v1.eyJzdWIiOiI0MDcwIiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQwNjI0MzQsImV4cCI6MTc5NDE0ODgzNH0.cyl2pe85GicOZT6QpBAbY2KgVnlw2Y0S9Vl5RKn9qLY';
 </script>
 
 #4471 merges 412 unique reports about dates, but its source data shows two separate problems.
