@@ -96,9 +96,12 @@ jobs:
           let submitted = false;
           let submission = null;
           let submittedNotes = null;
+          let transcribed = false;
+          let stage = "connect to the job tools";
 
           try {
             await client.connect(transport);
+            stage = "list the job tools";
             const { tools: mcpTools } = await client.listTools();
             await logExchange({ method: "tools/list" }, { tools: mcpTools });
             const tools = mcpTools.map((tool) => ({
@@ -126,6 +129,7 @@ jobs:
               instructions: skill,
               input: `Run the procedure for this clip: ${clipUrl}`,
               tools,
+              tool_choice: "required",
               parallel_tool_calls: false,
             });
 
@@ -142,10 +146,15 @@ jobs:
                 const mcpTool = mcpTools.find((item) => item.name === call.name);
                 if (!mcpTool) throw new Error("The model selected an unavailable job tool.");
                 if (submitted) throw new Error("The model attempted another tool call after submission.");
+                if (!transcribed && call.name !== "transcribe") {
+                  throw new Error("The worker did not transcribe the clip first.");
+                }
 
+                stage = `call job tool ${call.name}`;
                 const reply = await client.callTool({ name: call.name, arguments: args });
                 await logExchange({ tool: call.name, arguments: args }, reply);
                 if (reply?.isError) throw new Error(`Job tool ${call.name} returned an error.`);
+                if (call.name === "transcribe") transcribed = true;
 
                 if (call.name === "submit") {
                   const receipt = findReceipt(reply);
@@ -178,6 +187,7 @@ jobs:
                 previous_response_id: response.id,
                 input: outputs,
                 tools,
+                tool_choice: "required",
                 parallel_tool_calls: false,
               });
             }
@@ -187,10 +197,8 @@ jobs:
             console.log("Remote worker submitted job 2. Result saved as a short-lived artifact.");
           } catch (error) {
             try { await client.close(); } catch {}
-            const message = String(error?.message ?? error)
-              .replaceAll(jobUrl, "[JOB_MCP_URL]")
-              .replaceAll(process.env.OPENAI_API_KEY, "[REDACTED]");
-            console.error(`Remote worker failed: ${message}`);
+            const details = [error?.name, error?.status, error?.code].filter(Boolean).join(" ");
+            console.error(`Remote worker failed during ${stage}${details ? ` (${details})` : ""}.`);
             process.exitCode = 1;
           }
           NODE
